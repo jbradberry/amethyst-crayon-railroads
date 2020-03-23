@@ -1,7 +1,9 @@
 
 from amethyst.core  import Object, Attr
-from amethyst.games import Engine, EnginePlugin, Filter
-from amethyst.games.plugins import GrantManager, Turns, Grant
+from amethyst.games import action, Engine, EnginePlugin, Filter
+from amethyst.games.plugins import GrantManager, Grant
+
+from . import turns
 
 
 class RailroadEngine(Engine):
@@ -12,4 +14,19 @@ class RailroadEngine(Engine):
 
         # Most turn-based games will want the GrantManager and Turns plugin
         self.register_plugin(GrantManager())
-        self.register_plugin(Turns())
+        self.register_plugin(turns.DoubleBackStart())
+
+
+class RailroadPlugin(EnginePlugin):
+
+    def next_turn(self, game):
+        game.turn_start()
+
+    @action
+    def begin(self, game, stash):
+        self.next_turn(game)
+
+    @action
+    def end_turn(self, game, stash):
+        game.commit()
+        self.next_turn(game)
