@@ -25,6 +25,7 @@ class RailroadPlugin(EnginePlugin):
 
     def next_turn(self, game):
         game.turn_start()
+        game.grant(game.turn_player(), Grant(name="end_turn"))
 
     @action
     def begin(self, game, stash):
