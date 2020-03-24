@@ -28,5 +28,5 @@ class RailroadEngineTest(unittest.TestCase):
             self.assertEqual(game.turn_player_num(), p)
             grant = game.list_grants(game.turn_player_num())[0]
             self.assertEqual(grant.name, 'end_turn')
-            game.trigger(game.turn_player(), 'end_turn', {})
+            game.trigger(game.turn_player(), grant.id, {})
             game.process_queue()
