@@ -16,9 +16,6 @@ class RailroadEngine(Engine):
         self.register_plugin(GrantManager())
         self.register_plugin(turns.DoubleBackStart())
 
-        # FIXME: we want to dynamically register the specific railroad game plugin
-        self.register_plugin(RailroadPlugin())
-
 
 class RailroadPlugin(EnginePlugin):
     AMETHYST_PLUGIN_COMPAT = 1  # Plugin API version

@@ -7,9 +7,11 @@ class RailroadEngineTest(unittest.TestCase):
 
     def test_basic(self):
         game = engine.RailroadEngine()
+        game.register_plugin(engine.RailroadPlugin())
 
     def test_doubleback(self):
         game = engine.RailroadEngine({'players': list(range(3))})
+        game.register_plugin(engine.RailroadPlugin())
         game.initialize()
         game.call_immediate("begin")
 
@@ -20,6 +22,7 @@ class RailroadEngineTest(unittest.TestCase):
 
     def test_grants(self):
         game = engine.RailroadEngine({'players': list(range(3))})
+        game.register_plugin(engine.RailroadPlugin())
         game.initialize()
         game.call_immediate("begin")
 
