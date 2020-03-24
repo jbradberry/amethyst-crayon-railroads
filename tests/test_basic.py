@@ -30,3 +30,7 @@ class RailroadEngineTest(unittest.TestCase):
             self.assertEqual(grant.name, 'end_turn')
             game.trigger(game.turn_player(), grant.id, {})
             game.process_queue()
+
+
+if __name__ == '__main__':
+    unittest.main()
