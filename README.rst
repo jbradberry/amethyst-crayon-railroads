@@ -9,7 +9,7 @@ A railroad-building simulator.
 
 Requirements
 ------------
-- Python 3.5+
+- Python 3.6+
 - amethyst-games_
 - amethyst-core_
 - six
