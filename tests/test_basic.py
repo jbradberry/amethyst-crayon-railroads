@@ -34,6 +34,15 @@ class RailroadEngineTest(unittest.TestCase):
             game.trigger(game.turn_player(), grant.id, {})
             game.process_queue()
 
+    def test_deck(self):
+        game = engine.RailroadEngine({'players': list(range(3))})
+        game.register_plugin(engine.RailroadPlugin())
+        game.initialize()
+        game.call_immediate("begin")
+
+        self.assertFalse(game.discard_pile.stack)
+        self.assertTrue(game.draw_pile.stack)
+
 
 if __name__ == '__main__':
     unittest.main()

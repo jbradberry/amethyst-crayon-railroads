@@ -1,6 +1,7 @@
 
 from amethyst.core  import Object, Attr
-from amethyst.games import action, Engine, EnginePlugin, Filter
+from amethyst.games import action, Engine, EnginePlugin, Filter, FILTER_ALL
+from amethyst.games.objects import Pile
 from amethyst.games.plugins import GrantManager, Grant
 
 from . import turns
@@ -8,6 +9,8 @@ from . import turns
 
 class RailroadEngine(Engine):
     map = Attr()
+    draw_pile = Attr(default=Pile)
+    discard_pile = Attr(default=Pile)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,9 +29,19 @@ class RailroadPlugin(EnginePlugin):
 
     @action
     def begin(self, game, stash):
+        self.load_deck(game)
+        self.shuffle(game)
         self.next_turn(game)
 
     @action
     def end_turn(self, game, stash):
         game.commit()
         self.next_turn(game)
+
+    def load_deck(self, game):
+        game.discard_pile.extend(range(156))
+
+    def shuffle(self, game):
+        game.discard_pile.shuffle()
+        deck = game.discard_pile.remove(FILTER_ALL)
+        game.draw_pile.extend(deck)
