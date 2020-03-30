@@ -15,7 +15,8 @@ class RailroadEngineTest(unittest.TestCase):
         game.initialize()
         game.call_immediate("begin")
 
-        for turn, player in enumerate([0, 1, 2, 2, 1, 0]):
+        for turn, (round, player) in enumerate(zip([0, 0, 0, 1, 1, 1], [0, 1, 2, 2, 1, 0])):
+            self.assertEqual(game.turn_round(), 'setup-{}'.format(round))
             self.assertEqual(game.turn_number(), turn)
             self.assertEqual(game.turn_player_num(), player)
             game.call_immediate("end_turn")
