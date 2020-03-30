@@ -1,5 +1,7 @@
 import unittest
 
+from amethyst.games import Filter
+
 from railroads import engine
 
 
@@ -30,8 +32,9 @@ class RailroadEngineTest(unittest.TestCase):
         for p in range(3):
             self.assertEqual(game.turn_number(), p)
             self.assertEqual(game.turn_player_num(), p)
-            grant = game.list_grants(game.turn_player_num())[0]
-            self.assertEqual(grant.name, 'end_turn')
+            self.assertListEqual([g.name for g in game.list_grants(game.turn_player_num())],
+                                 ['draw', 'end_turn'])
+            grant = game.list_grants(game.turn_player_num(), Filter(name='end_turn'))[0]
             game.trigger(game.turn_player(), grant.id, {})
             game.process_queue()
 
@@ -41,8 +44,23 @@ class RailroadEngineTest(unittest.TestCase):
         game.initialize()
         game.call_immediate("begin")
 
-        self.assertFalse(game.discard_pile.stack)
-        self.assertTrue(game.draw_pile.stack)
+        self.assertEqual(game.discard_pile.count(), 0)
+        self.assertEqual(game.draw_pile.count(), 156)
+
+    def test_draw(self):
+        game = engine.RailroadEngine({'players': list(range(3))})
+        game.register_plugin(engine.RailroadPlugin())
+        game.initialize()
+        game.call_immediate("begin")
+
+        for p in range(3):
+            draw = game.list_grants(game.turn_player_num(), Filter(name='draw'))[0]
+            game.trigger(game.turn_player(), draw.id, {})
+            end_turn = game.list_grants(game.turn_player_num(), Filter(name='end_turn'))[0]
+            game.trigger(game.turn_player(), end_turn.id, {})
+            game.process_queue()
+            self.assertEqual(game.discard_pile.count(), p + 1)
+            self.assertEqual(game.draw_pile.count(), 156 - p - 1)
 
 
 if __name__ == '__main__':

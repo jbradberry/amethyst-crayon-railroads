@@ -23,6 +23,7 @@ class RailroadPlugin(EnginePlugin):
 
     def next_turn(self, game):
         game.turn_start()
+        game.grant(game.turn_player(), Grant(name="draw"))
         game.grant(game.turn_player(), Grant(name="end_turn"))
 
     @action
@@ -30,6 +31,11 @@ class RailroadPlugin(EnginePlugin):
         self.load_deck(game)
         self.shuffle(game)
         self.next_turn(game)
+
+    @action
+    def draw(self, game, stash):
+        card = game.draw_pile.pop()
+        game.discard_pile.append(card)
 
     @action
     def end_turn(self, game, stash):
