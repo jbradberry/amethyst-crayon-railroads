@@ -1,6 +1,6 @@
 
 from amethyst.core  import Object, Attr
-from amethyst.games import action, Engine, EnginePlugin, Filter, FILTER_ALL
+from amethyst.games import action, Engine, EnginePlugin, Filter
 from amethyst.games.objects import Pile
 from amethyst.games.plugins import GrantManager, Grant, Turns
 
@@ -41,5 +41,5 @@ class RailroadPlugin(EnginePlugin):
 
     def shuffle(self, game):
         game.discard_pile.shuffle()
-        deck = game.discard_pile.remove(FILTER_ALL)
+        deck = game.discard_pile.remove()
         game.draw_pile.extend(deck)
