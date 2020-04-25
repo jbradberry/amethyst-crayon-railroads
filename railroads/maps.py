@@ -14,8 +14,20 @@ class Hexmap(Object):
 
 
 class StraightRowHexmap(Hexmap):
-    pass
+    def is_adjacent(self, co1, co2):
+        if co1 not in self or co2 not in self:
+            return False
+        c, r = co1
+        return any(
+            (c + dc, r + dr) == co2 for dc, dr in [(2, 0), (1, -1), (-1, -1), (-2, 0), (-1, 1), (1, 1)]
+        )
 
 
 class StraightColumnHexmap(Hexmap):
-    pass
+    def is_adjacent(self, co1, co2):
+        if co1 not in self or co2 not in self:
+            return False
+        c, r = co1
+        return any(
+            (c + dc, r + dr) == co2 for dc, dr in [(1, 1), (1, -1), (0, -2), (-1, -1), (-1, 1), (0, 2)]
+        )
