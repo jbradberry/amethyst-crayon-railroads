@@ -36,6 +36,18 @@ class StraightRowHexmapTest(unittest.TestCase):
     def test_not_adjacent_wrong_phase(self):
         self.assertFalse(self.map.is_adjacent((3, 3), (4, 3)))
 
+    def test_terrain(self):
+        _map = maps.StraightRowHexmap(width=5, height=5)
+        plains = [(c, r) for r in range(3) for c in range(5)]
+        mountains = [(c, r) for r in range(3, 5) for c in range(5)]
+        data = {'plain': plains, 'mountain': mountains}
+        _map.register_terrain(data)
+        terrain = type(_map.terrain[(0, 0)])
+
+        self.assertEqual(len(_map.terrain), 13)
+        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.PLAIN), 8)
+        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.MOUNTAIN), 5)
+
 
 class StraightColumnHexmapTest(unittest.TestCase):
     def setUp(self):
@@ -69,3 +81,15 @@ class StraightColumnHexmapTest(unittest.TestCase):
 
     def test_not_adjacent_wrong_phase(self):
         self.assertFalse(self.map.is_adjacent((3, 3), (4, 3)))
+
+    def test_terrain(self):
+        _map = maps.StraightRowHexmap(width=5, height=5)
+        plains = [(c, r) for r in range(3) for c in range(5)]
+        mountains = [(c, r) for r in range(3, 5) for c in range(5)]
+        data = {'plain': plains, 'mountain': mountains}
+        _map.register_terrain(data)
+        terrain = type(_map.terrain[(0, 0)])
+
+        self.assertEqual(len(_map.terrain), 13)
+        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.PLAIN), 8)
+        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.MOUNTAIN), 5)
