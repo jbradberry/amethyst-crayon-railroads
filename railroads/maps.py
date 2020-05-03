@@ -1,13 +1,20 @@
 from enum import Enum
 
 from amethyst.core import Object, Attr, dict_of
+from amethyst.games import Filterable
+
+
+class Hex(Filterable):
+    coordinates = Attr()
+
+    terrain = Attr()
 
 
 class Hexmap(Object):
     height = Attr(int)
     width = Attr(int)
 
-    terrain = Attr(dict_of(int), default=dict)
+    hexes = Attr(default=dict)
 
     def _hexgrid_invariant(self, co):
         col, row = co
@@ -18,18 +25,18 @@ class Hexmap(Object):
     def __contains__(self, co):
         if not self._hexgrid_invariant(co):
             return False
-        if self.terrain and co not in self.terrain:
+        if self.hexes and co not in self.hexes:
             return False
         return True
 
-    def register_terrain(self, data):
+    def register_hexes(self, data):
         terrain_types = Enum('Terrain', ' '.join(t.upper() for t in data))
         for t_name, coordinates in data.items():
             t = terrain_types[t_name.upper()]
             for co in coordinates:
                 if not self._hexgrid_invariant(co):
                     continue
-                self.terrain[co] = t
+                self.hexes[co] = Hex(coordinates=co, terrain=t)
 
 
 class StraightRowHexmap(Hexmap):

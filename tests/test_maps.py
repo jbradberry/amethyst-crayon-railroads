@@ -41,12 +41,12 @@ class StraightRowHexmapTest(unittest.TestCase):
         plains = [(c, r) for r in range(3) for c in range(5)]
         mountains = [(c, r) for r in range(3, 5) for c in range(5)]
         data = {'plain': plains, 'mountain': mountains}
-        _map.register_terrain(data)
-        terrain = type(_map.terrain[(0, 0)])
+        _map.register_hexes(data)
+        terrain = type(_map.hexes[(0, 0)].terrain)
 
-        self.assertEqual(len(_map.terrain), 13)
-        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.PLAIN), 8)
-        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.MOUNTAIN), 5)
+        self.assertEqual(len(_map.hexes), 13)
+        self.assertEqual(sum(1 for co, H in _map.hexes.items() if H.terrain == terrain.PLAIN), 8)
+        self.assertEqual(sum(1 for co, H in _map.hexes.items() if H.terrain == terrain.MOUNTAIN), 5)
 
 
 class StraightColumnHexmapTest(unittest.TestCase):
@@ -87,9 +87,9 @@ class StraightColumnHexmapTest(unittest.TestCase):
         plains = [(c, r) for r in range(3) for c in range(5)]
         mountains = [(c, r) for r in range(3, 5) for c in range(5)]
         data = {'plain': plains, 'mountain': mountains}
-        _map.register_terrain(data)
-        terrain = type(_map.terrain[(0, 0)])
+        _map.register_hexes(data)
+        terrain = type(_map.hexes[(0, 0)].terrain)
 
-        self.assertEqual(len(_map.terrain), 13)
-        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.PLAIN), 8)
-        self.assertEqual(sum(1 for co, T in _map.terrain.items() if T == terrain.MOUNTAIN), 5)
+        self.assertEqual(len(_map.hexes), 13)
+        self.assertEqual(sum(1 for co, H in _map.hexes.items() if H.terrain == terrain.PLAIN), 8)
+        self.assertEqual(sum(1 for co, H in _map.hexes.items() if H.terrain == terrain.MOUNTAIN), 5)
