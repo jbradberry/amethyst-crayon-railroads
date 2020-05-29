@@ -44,8 +44,8 @@ class RailroadEngineTest(unittest.TestCase):
         game.initialize()
         game.call_immediate("begin")
 
-        self.assertEqual(game.discard_pile.count(), 0)
-        self.assertEqual(game.draw_pile.count(), 156)
+        self.assertEqual(len(game.discard_pile), 0)
+        self.assertEqual(len(game.draw_pile), 156)
 
     def test_draw(self):
         game = engine.RailroadEngine({'players': list(range(3))})
@@ -59,8 +59,8 @@ class RailroadEngineTest(unittest.TestCase):
             end_turn = game.list_grants(game.turn_player_num(), Filter(name='end_turn'))[0]
             game.trigger(game.turn_player(), end_turn.id, {})
             game.process_queue()
-            self.assertEqual(game.discard_pile.count(), p + 1)
-            self.assertEqual(game.draw_pile.count(), 156 - p - 1)
+            self.assertEqual(len(game.discard_pile), p + 1)
+            self.assertEqual(len(game.draw_pile), 156 - p - 1)
 
 
 if __name__ == '__main__':
