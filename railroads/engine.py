@@ -4,9 +4,10 @@ from amethyst.games import action, Engine, EnginePlugin, Filter
 from amethyst.games.util import random
 from amethyst.games.plugins import GrantManager, Grant, Turns
 
+from . import maps
+
 
 class RailroadEngine(Engine):
-    map = Attr()
     draw_pile = Attr(default=list)
     discard_pile = Attr(default=list)
 
@@ -16,6 +17,7 @@ class RailroadEngine(Engine):
         # Most turn-based games will want the GrantManager and Turns plugin
         self.register_plugin(GrantManager())
         self.register_plugin(Turns(setup_rounds=(1, -1)))
+        self.register_plugin(maps.HexmapContainer())
 
 
 class RailroadPlugin(EnginePlugin):
