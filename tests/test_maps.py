@@ -141,5 +141,66 @@ class HexmapContainerColumnTest(unittest.TestCase):
 #         self.assertEqual(sum(1 for co, H in _map.hexes.items() if H.terrain == terrain.MOUNTAIN), 5)
 
 
+class HexmapContainerMultiTest(unittest.TestCase):
+    def setUp(self):
+        self.game = engine.RailroadEngine()
+        data = [('left', 'row', 5, 5), ('right', 'row', 5, 5)]
+        self.game.map_load_definition(data)
+
+        data = {
+            'plain': {
+                'left': [(c, r) for c in range(5) for r in range(5)],
+                'right': [(c, r) for c in range(5) for r in range(5)]
+            }
+        }
+        self.game.map_load_hexes(data)
+
+        self.game.map_load_equivalents([(('left', 2, 2), ('right', 2, 2))])
+
+    def test_adjacent_list_from_equiv(self):
+        self.assertCountEqual(
+            self.game.map_adjacent(('left', 2, 2)),
+            [('left', 1, 1), ('left', 3, 1), ('left', 0, 2),
+             ('left', 4, 2), ('left', 1, 3), ('left', 3, 3),
+             ('right', 1, 1), ('right', 3, 1), ('right', 0, 2),
+             ('right', 4, 2), ('right', 1, 3), ('right', 3, 3)]
+        )
+        self.assertCountEqual(
+            self.game.map_adjacent(('right', 2, 2)),
+            [('left', 1, 1), ('left', 3, 1), ('left', 0, 2),
+             ('left', 4, 2), ('left', 1, 3), ('left', 3, 3),
+             ('right', 1, 1), ('right', 3, 1), ('right', 0, 2),
+             ('right', 4, 2), ('right', 1, 3), ('right', 3, 3)]
+        )
+
+    def test_adjacent_list_next_to_equiv(self):
+        self.assertCountEqual(
+            self.game.map_adjacent(('left', 1, 1)),
+            [('left', 0, 0), ('left', 2, 0), ('left', 3, 1), ('left', 0, 2), ('left', 2, 2), ('right', 2, 2)]
+        )
+        self.assertCountEqual(
+            self.game.map_adjacent(('right', 1, 1)),
+            [('right', 0, 0), ('right', 2, 0), ('right', 3, 1), ('right', 0, 2), ('right', 2, 2), ('left', 2, 2)]
+        )
+
+    def test_adjacent_list_too_far(self):
+        self.assertCountEqual(
+            self.game.map_adjacent(('left', 0, 0)),
+            [('left', 2, 0), ('left', 1, 1)]
+        )
+        self.assertCountEqual(
+            self.game.map_adjacent(('right', 0, 0)),
+            [('right', 2, 0), ('right', 1, 1)]
+        )
+
+    def test_is_adjacent_from_equiv(self):
+        self.assertTrue(self.game.map_is_adjacent(('left', 2, 2), ('right', 3, 1)))
+        self.assertTrue(self.game.map_is_adjacent(('right', 2, 2), ('left', 3, 1)))
+
+    def test_is_adjacent_next_to_equiv(self):
+        self.assertTrue(self.game.map_is_adjacent(('left', 3, 1), ('right', 2, 2)))
+        self.assertTrue(self.game.map_is_adjacent(('right', 3, 1), ('left', 2, 2)))
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -13,13 +13,14 @@ DIRECTIONS = {
 class HexmapContainer(EnginePlugin):
     AMETHYST_PLUGIN_COMPAT = 1  # Plugin API version
     AMETHYST_ENGINE_METHODS = [
-        'load_definition', 'load_hexes',
-        'contains', 'is_adjacent', 'adjacent'
+        'load_definition', 'load_hexes', 'load_equivalents',
+        'contains', 'is_adjacent', 'adjacent',
     ]
     AMETHYST_ENGINE_DEFAULT_METHOD_PREFIX = "map_"
 
     _maps = Attr(default=dict)
     _terrain = Attr(default=dict)
+    _equivalents = Attr(default=dict)
 
     def hexgrid_invariant(self, map_name, col, row):
         if map_name not in self._maps:
@@ -29,6 +30,12 @@ class HexmapContainer(EnginePlugin):
         if not (0 <= col <= width and 0 <= row <= height):
             return False
         return (col + row) & 1 == 0
+
+    def equivalence_set(self, coordinates):
+        results = [coordinates]
+        if coordinates in self._equivalents:
+            results.append(self._equivalents[coordinates])
+        return results
 
     def load_definition(self, game, data):
         for name, _type, height, width in data:
@@ -46,28 +53,34 @@ class HexmapContainer(EnginePlugin):
                         continue
                     self._terrain[(map_name, col, row)] = t
 
+    def load_equivalents(self, game, data):
+        for co1, co2 in data:
+            if not self.hexgrid_invariant(*co1) or not self.hexgrid_invariant(*co2):
+                continue
+            self._equivalents[co1] = co2
+            self._equivalents[co2] = co1
+
     def contains(self, game, coordinates):
         if not self.hexgrid_invariant(*coordinates):
             return False
         return coordinates in self._terrain
 
     def is_adjacent(self, game, co1, co2):
-        if co1[0] != co2[0]:
-            return False
         if not self.contains(game, co1) or not self.contains(game, co2):
             return False
-        map_name, col, row = co1
         return any(
-            (map_name, col + dc, row + dr) == co2
+            co2 in self.equivalence_set((map_name, col + dc, row + dr))
+            for map_name, col, row in self.equivalence_set(co1)
             for dc, dr in DIRECTIONS[self._maps[map_name][0]]
         )
 
     def adjacent(self, game, coordinates):
         if not self.contains(game, coordinates):
-            return []
-        map_name, col, row = coordinates
-        return [
-            (map_name, col + dc, row + dr)
+            return set()
+        return {
+            (n, c, r)
+            for map_name, col, row in self.equivalence_set(coordinates)
             for dc, dr in DIRECTIONS[self._maps[map_name][0]]
-            if self.contains(game, (map_name, col + dc, row + dr))
-        ]
+            for n, c, r in self.equivalence_set((map_name, col + dc, row + dr))
+            if self.contains(game, (n, c, r))
+        }
